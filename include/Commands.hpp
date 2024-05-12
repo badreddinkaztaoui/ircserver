@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/09 17:27:01 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/12 17:01:53 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/12 18:23:27 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,7 @@
 
 #include <iostream>
 #include <string>
-#include "IrcServ.hpp"
-#include "Client.hpp"
 #include "Request.hpp"
-
-class IrcServ;
-class Client;
-
 
 class Commands
 {
@@ -29,8 +23,6 @@ class Commands
 		Commands();
 		~Commands();
 	public:
-        // Parsing
-        Request parseResponse(std::string response);
         // Commands
 		std::string connect(Request request, int fd);
         std::string nick(Request request, int fd);

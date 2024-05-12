@@ -6,11 +6,13 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:23 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/12 16:51:52 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/12 18:46:10 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/IrcServ.hpp"
+#include "../include/Commands.hpp"
+#include "../include/Request.hpp"
 
 #define MAX_BUFF 4096
 #define MAX_EVENTS 10
@@ -46,6 +48,30 @@ void    IrcServ::acceptSocket(int serverSocket, int epollfd) {
         errorFunction("Can't add client.", serverSocket);
 }
 
+Request IrcServ::parseResponse(std::string response) {
+    Request request;
+    request.status = 0;
+    
+    if (response[0] == ' ' || response[0] == '\0' || response[0] == '\n')
+        request.status = 1;
+
+    std::istringstream iss(response);
+    std::vector<std::string> args;
+
+    std::string cmd;
+    iss >> cmd;
+
+    for (std::string arg; iss >> arg;)
+        args.push_back(arg);
+
+    if (args.empty())
+        request.status = 1;
+
+    request.cmd = cmd;
+    request.args = args;
+    return request;
+}
+
 void    IrcServ::multiClient(int serverSocket, int epollfd) {
 
     while (1) {
@@ -63,22 +89,24 @@ void    IrcServ::multiClient(int serverSocket, int epollfd) {
                 int     bitsReaded = 0;
                 ssize_t recvData = recv(events[i].data.fd, buffer + bitsReaded, sizeof(buffer) - bitsReaded, 0);
 
-                if (recvData == 0) {
-                    epoll_ctl(serverSocket, EPOLL_CTL_DEL, events[i].data.fd, NULL);
-                    std::cout << "Client " << events[i].data.fd << " Disconnected" << std::endl;
-                    close(events[i].data.fd);
+                if (recvData <= 0) {
+                    if (recvData == 0) {
+                        epoll_ctl(serverSocket, EPOLL_CTL_DEL, events[i].data.fd, NULL);
+                        std::cout << "Client " << events[i].data.fd << " Disconnected" << std::endl;
+                        close(events[i].data.fd);
 
-                    //! -------------------------------------------
-                    //TODO: Kick client from channel if he is in one
-                    //! -------------------------------------------
+                        //! -------------------------------------------
+                        //TODO: Kick client from channel if he is in one
+                        //! -------------------------------------------
 
-                    delete clientList[events[i].data.fd];
-                    clientList.erase(events[i].data.fd);
+                        delete clientList[events[i].data.fd];
+                        clientList.erase(events[i].data.fd);
+                    }
                     break;
                 } else {
                     bitsReaded += recvData;
                     if (bitsReaded < MAX_BUFF) {
-                        std::cout << "Message: " << buffer << std::endl;
+                        Request request = parseResponse(buffer);
                     } else {
                         std::cout << "Message is too long." << std::endl;
                         break;

@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 16:14:37 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/12 16:57:25 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/12 18:41:48 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,11 +18,11 @@
 #include <vector>
 
 class Request {
-private:
+public:
     std::string                 cmd;
     std::vector<std::string>    args;
     int                         status;
-public:
+
     Request();
     Request(std::string cmd, std::vector<std::string> args, int status);
     ~Request();
