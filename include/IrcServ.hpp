@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:53 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/12 18:22:55 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/14 02:23:14 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,6 @@ class IrcServ {
     public:
         IrcServ();
         IrcServ(char **av);
-        Request                     parseResponse(std::string response);
         void                        acceptSocket(int serverSocket, int epollfd);
         void                        multiClient(int serverSocket, int epollfd);
         void                        createServer();

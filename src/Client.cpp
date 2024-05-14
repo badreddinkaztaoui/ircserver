@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:59:01 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/12 17:01:14 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/14 03:45:49 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,10 @@ std::string Client::getNickName() {
 }
 std::string Client::getUserName() {
     return userName;
+}
+
+void    Client::setAuthenticated(int auth) {
+    isAuth = auth;
 }
 
 bool    Client::getAuthenticated() {

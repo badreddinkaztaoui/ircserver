@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:23 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/12 18:46:10 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/14 03:48:15 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,29 +48,6 @@ void    IrcServ::acceptSocket(int serverSocket, int epollfd) {
         errorFunction("Can't add client.", serverSocket);
 }
 
-Request IrcServ::parseResponse(std::string response) {
-    Request request;
-    request.status = 0;
-    
-    if (response[0] == ' ' || response[0] == '\0' || response[0] == '\n')
-        request.status = 1;
-
-    std::istringstream iss(response);
-    std::vector<std::string> args;
-
-    std::string cmd;
-    iss >> cmd;
-
-    for (std::string arg; iss >> arg;)
-        args.push_back(arg);
-
-    if (args.empty())
-        request.status = 1;
-
-    request.cmd = cmd;
-    request.args = args;
-    return request;
-}
 
 void    IrcServ::multiClient(int serverSocket, int epollfd) {
 
@@ -106,7 +83,12 @@ void    IrcServ::multiClient(int serverSocket, int epollfd) {
                 } else {
                     bitsReaded += recvData;
                     if (bitsReaded < MAX_BUFF) {
-                        Request request = parseResponse(buffer);
+                        Commands commands(clientList, port, passWord);
+                        Request request = commands.parseResponse(buffer);
+                        std::string response = commands.parseRequest(request, events[i].data.fd);
+                        send(events[i].data.fd, response.c_str(), response.size(), 0);
+
+                        
                     } else {
                         std::cout << "Message is too long." << std::endl;
                         break;

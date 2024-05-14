@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 12:05:13 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/12 17:00:08 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/14 03:45:02 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,11 @@ class Client {
         bool        getAuthenticated();
         std::string getChannel();
         // Setters
-        void        setAuthenticated(int autho);
+        void        setAuthenticated(int auth);
         void        setNickName(std::string nickname);
         void        setUserName(std::string username);
         void        setChannel(std::string channel);
 
-        // void        authentification(std::vector<std::string> &vectStrings);
         ~Client();
 };
 
