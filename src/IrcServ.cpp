@@ -6,13 +6,14 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:23 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/14 03:48:15 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/19 22:22:31 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/IrcServ.hpp"
-#include "../include/Commands.hpp"
 #include "../include/Request.hpp"
+#include <sys/socket.h>
+#include <netdb.h>
 
 #define MAX_BUFF 4096
 #define MAX_EVENTS 10
@@ -33,11 +34,15 @@ void    errorFunction(const char *error, int serverSocket) {
 void    IrcServ::acceptSocket(int serverSocket, int epollfd) {
     int         clientSocket;
     sockaddr_in clientAddress;
+    
+
     socklen_t   clientAddressSize = sizeof(clientAddress);
 
     clientSocket = accept(serverSocket, (struct sockaddr*)&clientAddress, &clientAddressSize);
     if (clientSocket < 0)
         errorFunction("Accept Failed", serverSocket);
+
+    clientList[clientSocket] = new Client(clientSocket);
 
     epoll_event  event;
     event.events = EPOLLIN;
@@ -83,9 +88,8 @@ void    IrcServ::multiClient(int serverSocket, int epollfd) {
                 } else {
                     bitsReaded += recvData;
                     if (bitsReaded < MAX_BUFF) {
-                        Commands commands(clientList, port, passWord);
-                        Request request = commands.parseResponse(buffer);
-                        std::string response = commands.parseRequest(request, events[i].data.fd);
+                        Request request = parseResponse(buffer);
+                        std::string response = parseRequest(request, events[i].data.fd);
                         send(events[i].data.fd, response.c_str(), response.size(), 0);
 
                         

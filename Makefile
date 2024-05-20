@@ -1,5 +1,5 @@
 NAME = ircserv
-FILES = main.cpp $(wildcard src/*.cpp)
+FILES = main.cpp $(wildcard src/*.cpp) $(wildcard src/commands/*.cpp) $(wildcard src/channel/*.cpp)
 RM = rm -rf
 CXX = c++ 
 CXXFLAGS = -Wall -Wextra -Werror -std=c++98 -fsanitize=address -g3
