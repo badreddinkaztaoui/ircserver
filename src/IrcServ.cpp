@@ -6,17 +6,15 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:23 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/19 22:22:31 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/21 04:15:04 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/IrcServ.hpp"
 #include "../include/Request.hpp"
-#include <sys/socket.h>
-#include <netdb.h>
 
 #define MAX_BUFF 4096
-#define MAX_EVENTS 10
+#define MAX_EVENTS 20
 
 IrcServ::IrcServ(): clientList() {}
 
@@ -54,54 +52,63 @@ void    IrcServ::acceptSocket(int serverSocket, int epollfd) {
 }
 
 
-void    IrcServ::multiClient(int serverSocket, int epollfd) {
-
+void IrcServ::multiClient(int serverSocket, int epollfd) {
     while (1) {
         epoll_event events[MAX_EVENTS];
-        int epwfd = epoll_wait(epollfd, events, MAX_EVENTS, -1);
+        int nfds = epoll_wait(epollfd, events, MAX_EVENTS, -1);
 
-        if (epwfd < 0)
-            errorFunction("Waiting for events failed.", serverSocket);
-    
-        for (int i = 0; i < epwfd; i++) {
-            if (events[i].data.fd == serverSocket) {
+        if (nfds < 0) {
+            errorFunction("epoll_wait failed", serverSocket); 
+            return;
+        }
+
+        for (int i = 0; i < nfds; ++i) {
+            int fd = events[i].data.fd;
+
+            if (fd == serverSocket) { 
                 this->acceptSocket(serverSocket, epollfd);
             } else {
-                char    buffer[MAX_BUFF] = {0};
-                int     bitsReaded = 0;
-                ssize_t recvData = recv(events[i].data.fd, buffer + bitsReaded, sizeof(buffer) - bitsReaded, 0);
+                std::string receivedData;
+                char buffer[MAX_BUFF];
+                ssize_t bytesRead;
 
-                if (recvData <= 0) {
-                    if (recvData == 0) {
-                        epoll_ctl(serverSocket, EPOLL_CTL_DEL, events[i].data.fd, NULL);
-                        std::cout << "Client " << events[i].data.fd << " Disconnected" << std::endl;
-                        close(events[i].data.fd);
+                while ((bytesRead = recv(fd, buffer, MAX_BUFF - receivedData.size() - 1, 0)) > 0) {
+                    buffer[bytesRead] = '\0'; 
+                    receivedData += buffer;
 
-                        //! -------------------------------------------
-                        //TODO: Kick client from channel if he is in one
-                        //! -------------------------------------------
+                    if (receivedData.find("\r\n") != std::string::npos) {
+                        Request request = parseResponse(receivedData);
+                        std::string response = parseRequest(request, fd);
+                        send(fd, response.c_str(), response.size(), 0);
 
-                        delete clientList[events[i].data.fd];
-                        clientList.erase(events[i].data.fd);
-                    }
-                    break;
-                } else {
-                    bitsReaded += recvData;
-                    if (bitsReaded < MAX_BUFF) {
-                        Request request = parseResponse(buffer);
-                        std::string response = parseRequest(request, events[i].data.fd);
-                        send(events[i].data.fd, response.c_str(), response.size(), 0);
-
-                        
-                    } else {
-                        std::cout << "Message is too long." << std::endl;
+                        receivedData.clear();
+                        break;
+                    } else if (receivedData.size() >= MAX_BUFF) {
+                        std::cerr << "Error: Message exceeds maximum length (4096 bytes)\n";
+                        send(fd, "ERROR :Message too long\r\n", 24, 0);
+                        // close(fd); 
+                        // epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, 0);
+                        if (clientList[fd]->getChannel() != "")
+                            channels[clientList[fd]->getChannel()]->removeClient(clientList[fd]);
+                        delete clientList[fd];
+                        clientList.erase(fd);
                         break;
                     }
                 }
-            } 
+                if (bytesRead <= 0) {
+                    // Client disconnected
+                    epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, 0);
+                    std::cout << "Client " << fd << " disconnected\n";
+                    close(fd);
+
+                    delete clientList[fd];
+                    clientList.erase(fd);
+                }
+            }
         }
     }
 }
+
 
 void    IrcServ::createServer() {
     int serverSocket = socket(AF_INET, SOCK_STREAM, 0);
@@ -137,5 +144,6 @@ void    IrcServ::createServer() {
 
     multiClient(serverSocket, epollfd);
 }
+
 
 IrcServ::~IrcServ() {}

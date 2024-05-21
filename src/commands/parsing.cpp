@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 16:21:52 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/20 04:52:45 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/21 11:09:34 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,15 +55,17 @@ std::string IrcServ::parseRequest(Request request, int fd) {
         response = user(request, fd);
     else if (request.cmd == "PRIVMSG")
         response = privmsg(request, fd);
+    else if (request.cmd == "JOIN")
+        response = join(request, fd);
+    else if (request.cmd == "INVITE")
+        response = invite(request, fd);
+    else if (request.cmd == "TOPIC")
+        response = topic(request, fd);
+    else if (request.cmd == "KICK")
+        response = kick(request, fd);
+    else if (request.cmd == "QUIT")
+        response = quit(request, fd);
     else
         response = "Unknown command\r\n";
     return response;
 }
-
-/*
-    TODO
-    - Implement the channel based commands
-    * I already started the implementation of the channel based commands. but it's not finished yet.
-    * I will continue the implementation of the channel based commands and then push the changes.
-    * GOOD LUCK!
-*/

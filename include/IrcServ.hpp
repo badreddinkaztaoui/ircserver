@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:53 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/19 22:20:43 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/21 08:53:56 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,17 @@
 #include <netinet/in.h>
 #include <sys/epoll.h>
 #include <unistd.h>
-#include <vector>
 #include <algorithm>
+#include <vector>
 #include <map>
+
+// Classes
 #include "Client.hpp"
 #include "Request.hpp"
+#include "Channel.hpp"
 
 class Client;
+class Channel;
 class IrcServ {
     private:
         std::string                     port;
@@ -34,7 +38,7 @@ class IrcServ {
         std::map<int, Client*>          clientList;
         std::vector<std::string>        usernames;
         std::vector<std::string>        nicknames;
-        // std::map<std::string, Channel*> channels;
+        std::map<std::string, Channel*> channels;
 
     public:
         IrcServ();
@@ -60,18 +64,19 @@ class IrcServ {
 		std::string                     connect(Request request, int fd);
         std::string                     nick(Request request, int fd);
         std::string                     user(Request request, int fd);
+        std::string                     privmsg(Request request, int fd);
         std::string                     join(Request request, int fd);
-        std::string                     join_message(std::string channel, int fd);
         std::string                     mode(Request request, int fd);
         std::string                     topic(Request request, int fd);
         std::string                     invite(Request request, int fd);
-        std::string                     privmsg(Request request, int fd);
         std::string                     kick(Request request, int fd);
         std::string                     quit(Request request, int fd);
 
         // --------------------------------- //
         // ------------- CHANNELS -----------//
         // --------------------------------- //
+        void                            createChannel(std::string channel, int fd);
+        void                            broadcast(std::string channel, int fd);
 
         ~IrcServ();
 };

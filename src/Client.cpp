@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:59:01 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/14 03:45:49 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/20 19:37:32 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,11 +49,19 @@ int Client::getClientFd() {
     return clientFd;
 }
 
+std::string Client::getChannel() {
+    return channel;
+}
+
 void    Client::setNickName(std::string nickname) {
     nickName = nickname;
 }
 void    Client::setUserName(std::string username) {
     userName = username;
+}
+
+void    Client::setChannel(std::string channelName) {
+    channel = channelName;
 }
 
 Client::~Client() {
