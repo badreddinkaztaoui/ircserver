@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:23 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/21 04:15:04 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/28 19:04:37 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,7 +16,10 @@
 #define MAX_BUFF 4096
 #define MAX_EVENTS 20
 
-IrcServ::IrcServ(): clientList() {}
+IrcServ::IrcServ(): clientList() {
+    this->port = "";
+    this->passWord = "";
+}
 
 IrcServ::IrcServ(char **av): clientList() {
     this->port = av[1];
@@ -70,39 +73,30 @@ void IrcServ::multiClient(int serverSocket, int epollfd) {
             } else {
                 std::string receivedData;
                 char buffer[MAX_BUFF];
-                ssize_t bytesRead;
+                ssize_t bytesRead = 0;
 
                 while ((bytesRead = recv(fd, buffer, MAX_BUFF - receivedData.size() - 1, 0)) > 0) {
                     buffer[bytesRead] = '\0'; 
                     receivedData += buffer;
 
+                    std::cout << "Received data: " << receivedData;
+                    
                     if (receivedData.find("\r\n") != std::string::npos) {
                         Request request = parseResponse(receivedData);
                         std::string response = parseRequest(request, fd);
                         send(fd, response.c_str(), response.size(), 0);
-
                         receivedData.clear();
                         break;
                     } else if (receivedData.size() >= MAX_BUFF) {
-                        std::cerr << "Error: Message exceeds maximum length (4096 bytes)\n";
-                        send(fd, "ERROR :Message too long\r\n", 24, 0);
-                        // close(fd); 
-                        // epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, 0);
+                        send(fd, "Message too long\r\n", 24, 0);
                         if (clientList[fd]->getChannel() != "")
                             channels[clientList[fd]->getChannel()]->removeClient(clientList[fd]);
-                        delete clientList[fd];
-                        clientList.erase(fd);
                         break;
                     }
                 }
                 if (bytesRead <= 0) {
-                    // Client disconnected
                     epoll_ctl(epollfd, EPOLL_CTL_DEL, fd, 0);
                     std::cout << "Client " << fd << " disconnected\n";
-                    close(fd);
-
-                    delete clientList[fd];
-                    clientList.erase(fd);
                 }
             }
         }
@@ -146,4 +140,14 @@ void    IrcServ::createServer() {
 }
 
 
-IrcServ::~IrcServ() {}
+IrcServ::~IrcServ() {
+    for (std::map<int, Client*>::iterator it = this->clientList.begin(); it != this->clientList.end(); ++it) {
+        delete it->second; 
+    }
+    this->clientList.clear();
+
+    for (std::map<std::string, Channel*>::iterator it = this->channels.begin(); it != this->channels.end(); ++it) {
+        delete it->second; 
+    }
+    this->channels.clear();
+}

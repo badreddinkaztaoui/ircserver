@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 04:47:39 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/21 11:17:41 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/21 11:43:01 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,13 @@ void Channel::addClient(Client* client) {
 }
 
 void Channel::removeClient(Client* client) {
-    this->clients.erase(std::remove(this->clients.begin(), this->clients.end(), client), this->clients.end());
+    for (size_t i = 0; i < this->clients.size(); i++) {
+        if (this->clients[i] == client) {
+            this->clients.erase(this->clients.begin() + i);
+            sendToAll(client->getNickName() + " Has left the channel\r\n");
+            return ;
+        }
+    }
 }
 
 void Channel::addOperator(int fd) {

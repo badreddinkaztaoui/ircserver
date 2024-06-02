@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 04:17:14 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/21 09:35:18 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/28 14:36:44 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@
 std::string toStr(int num);
 Channel*    findChannel(const std::string& name, std::map<std::string, Channel*>& channels);
 bool        isValidChannelName(const std::string& name);
+void        welcomeMessage(int fd);
 
 
 #endif

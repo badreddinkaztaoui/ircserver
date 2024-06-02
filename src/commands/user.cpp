@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 03:44:12 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/20 03:50:16 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/26 01:07:53 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,8 @@ std::string IrcServ::user(Request request, int fd) {
 
     if (!clientList[fd])
         return "You are not connected\n";
-    if (clientList[fd] && clientList[fd]->getAuthenticated() == 0)
-        return "You must authenticate first\n";
+    // if (clientList[fd] && clientList[fd]->getAuthenticated() == 0)
+    //     return "You must authenticate first\n";
     if (request.args.size() < 1)
         return "Your username is set to: " + clientList[fd]->getUserName() + "\n";
     if (request.args[0].size() > 9)

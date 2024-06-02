@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:53 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/21 08:53:56 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/28 19:04:02 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,7 +50,6 @@ class IrcServ {
         void                            acceptSocket(int serverSocket, int epollfd);
         void                            multiClient(int serverSocket, int epollfd);
         void                            createServer();
-
         // --------------------------------- //
         // ------------- PARSING ------------//
         // --------------------------------- //
@@ -61,7 +60,7 @@ class IrcServ {
         // ------------ COMMANDS ------------//
         // --------------------------------- //
         std::string                     serverCap(Request request, int fd);
-		std::string                     connect(Request request, int fd);
+        std::string                     pass(Request request, int fd);
         std::string                     nick(Request request, int fd);
         std::string                     user(Request request, int fd);
         std::string                     privmsg(Request request, int fd);

@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 09:53:45 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/21 11:25:26 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/05/25 01:25:46 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,6 @@ std::string IrcServ::topic(Request request, int fd) {
 
     if (!channel->isOperator(clientList[fd]->getClientFd()) || !channel->canSetTopic(clientList[fd]->getClientFd()))
         return "You don't have the permission to set the topic\r\n";
-    else {
-        channel->setTopic(request.args[1]);
-        return ":" + clientList[fd]->getNickName() + " TOPIC " + channel->getName() + " :" + channel->getTopic() + "\r\n";
-    }
+    channel->setTopic(request.args[1]);
+    return clientList[fd]->getNickName() + " has set the topic to: " + request.args[1] + "\r\n";
 }
