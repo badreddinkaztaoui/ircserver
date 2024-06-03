@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 10:54:52 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/21 11:18:21 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:02:00 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ std::string IrcServ::invite(Request request, int fd) {
                 return "User is already in the channel\r\n";
             it->second->setChannel(channel->getName());
             channel->addClient(it->second);
-            channel->setConeectedClients();
+            channel->setConnectedClients();
             send(it->second->getClientFd(), res.c_str(), res.length(), 0);
             broadcast(channel->getName(), fd);
             return clientList[fd]->getNickName() + " invited " + it->second->getNickName() + " to " + channel->getName() + "\r\n";

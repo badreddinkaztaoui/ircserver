@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/19 18:48:52 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/28 14:37:54 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:10:15 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,7 @@ std::string IrcServ::serverCap(Request request, int fd) {
         return "You are not connected\n";
     
     if (request.args[0] == "LS" && request.args[1] == "302") {
-        welcomeMessage(fd);
+        connectedMsg(fd);
     }
     return "";
 }

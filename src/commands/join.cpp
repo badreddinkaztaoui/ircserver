@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 16:24:59 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/21 11:17:30 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:02:00 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,59 +32,57 @@ void    IrcServ::broadcast(std::string channel, int fd) {
 std::string IrcServ::join(Request request, int fd) {
 
     if (!clientList[fd])
-        return "You have to be connected to join a channel\r\n";
+        return "\t\x03" "04You're not connected to the server\x03\n";
     if (clientList[fd] && clientList[fd]->getAuthenticated() == false)
-        return "You have to be authenticated to join a channel\r\n";
+        return "\t\x03" "04You have to be authenticated to join a channel\x03\n";
     if (request.args.size() < 1)
-        return "Not enough arguments\r\n";
+        return "\t\x03" "04Usage: /join <channel>\x03\n";
     
     std::string channel = request.args[0];
-    std::string key = request.args[1];
+    // A channel key is optional and can be empty
+    std::string key = request.args.size() > 1 ? request.args[1] : "";
 
     if (!isValidChannelName(channel))
-        return "Invalid channel name: must start with '#'\r\n";
+        return "\t\x03" "04Invalid channel name\x03\n";
     if (clientList[fd]->getChannel() == channel)
-        return "You are already in a channel\r\n";
+        return "\t\x03" "You are already in " + channel + "\x03\n";
 
     if (!findChannel(channel, this->channels))
-    {
         createChannel(channel, fd);
-    }
-    else
-    {
-        if (this->channels[channel]->isClosed() == "+i")
-        {
+    else {
+        if (this->channels[channel]->isClosed() == "+i") {
             if (!this->channels[channel]->isClient(clientList[fd]))
                 return "You are not invited to this channel\r\n";
+        } else {
+            
         }
-        else
-        {
-            if ((this->channels[channel]->getConnectedClients() >= this->channels[channel]->getLimit()) 
-                & (this->channels[channel]->getLimit() != 0))
-                return "Channel is full\r\n";
-            if (this->channels[channel]->isPrivate() == "+k")
-            {
-                if (this->channels[channel]->getPassword() != key)
-                    return "Invalid password\r\n";
-                if (this->channels[channel]->getPassword() == key)
-                {
-                    clientList[fd]->setChannel(channel);
-                    this->channels[channel]->addClient(clientList[fd]);
-                    this->channels[channel]->setConeectedClients();
-                    broadcast(channel, fd);
-                    return "";
-                }
-            }
-            else
-            {
-                clientList[fd]->setChannel(channel);
-                this->channels[channel]->addClient(clientList[fd]);
-                this->channels[channel]->setConeectedClients();
-                broadcast(channel, fd);
-                return "";
-            }
-        }
-        
     }    
     return "";
 }
+
+/**
+ *if ((this->channels[channel]->getConnectedClients() >= this->channels[channel]->getLimit()) 
+        & (this->channels[channel]->getLimit() != 0))
+        return "Channel is full\r\n";
+    if (this->channels[channel]->isPrivate() == "+k")
+    {
+        if (this->channels[channel]->getPassword() != key)
+            return "Invalid password\r\n";
+        if (this->channels[channel]->getPassword() == key)
+        {
+            clientList[fd]->setChannel(channel);
+            this->channels[channel]->addClient(clientList[fd]);
+            this->channels[channel]->setConnectedClients();
+            broadcast(channel, fd);
+            return "";
+        }
+    }
+    else
+    {
+        clientList[fd]->setChannel(channel);
+        this->channels[channel]->addClient(clientList[fd]);
+        this->channels[channel]->setConnectedClients();
+        broadcast(channel, fd);
+        return "";
+    }
+*/

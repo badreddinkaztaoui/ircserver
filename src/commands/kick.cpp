@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 10:13:03 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/21 10:30:03 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:02:00 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ std::string IrcServ::kick(Request request, int fd) {
                 std::string res = "You have been kicked from " + channel->getName() + "\r\n";
 
                 it->second->setChannel("");
-                channel->setConeectedClients();
+                channel->setConnectedClients();
                 channel->removeClient(it->second);
                 send(it->first, res.c_str(), res.length(), 0);
                 return "User " + request.args[1] + " has been kicked from " + channel->getName() + "\r\n";

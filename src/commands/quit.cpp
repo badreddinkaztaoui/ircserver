@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 09:31:53 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/25 02:08:05 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:02:00 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@ std::string IrcServ::quit(Request request, int fd) {
     
     if (clientList[fd]->getChannel() != "") {
         this->channels[clientList[fd]->getChannel()]->removeClient(clientList[fd]);
-        this->channels[clientList[fd]->getChannel()]->setConeectedClients();
+        this->channels[clientList[fd]->getChannel()]->setConnectedClients();
     }
     clientList[fd]->setChannel("");
     clientList[fd]->setAuthenticated(0);

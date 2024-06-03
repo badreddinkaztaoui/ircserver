@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/30 11:41:23 by nben-ais          #+#    #+#             */
-/*   Updated: 2024/05/28 19:04:37 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:34:59 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -79,8 +79,12 @@ void IrcServ::multiClient(int serverSocket, int epollfd) {
                     buffer[bytesRead] = '\0'; 
                     receivedData += buffer;
 
-                    std::cout << "Received data: " << receivedData;
-                    
+                    //! DON'T FORGET TO REMOVE THIS LINES
+                    std::cout << "Registration step: " << clientList[fd]->getRegistrationStep() << std::endl;
+                    std::cout << "Is registered: " << clientList[fd]->getIsRegistered() << std::endl;
+                    std::cout << "Is authenticated: " << clientList[fd]->getAuthenticated() << std::endl;
+                    //! DON'T FORGET TO REMOVE THIS LINES
+
                     if (receivedData.find("\r\n") != std::string::npos) {
                         Request request = parseResponse(receivedData);
                         std::string response = parseRequest(request, fd);

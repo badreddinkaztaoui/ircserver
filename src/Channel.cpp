@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 04:47:39 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/21 11:43:01 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:02:01 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ Channel::Channel(std::string name, Client* owner) {
 
 void    IrcServ::createChannel(std::string name, int fd) {
     this->channels[name] = new Channel(name, this->clientList[fd]);
-    this->channels[name]->setConeectedClients();
+    this->channels[name]->setConnectedClients();
     this->channels[name]->setOperator(clientList[fd]->getClientFd());
     this->clientList[fd]->setChannel(name);
     broadcast(name, fd);
@@ -81,7 +81,7 @@ void    Channel::setLimit(int limit) {
     this->limit = limit;
 }
 
-void    Channel::setConeectedClients() {
+void    Channel::setConnectedClients() {
     this->connectedClients = this->clients.size();
 }
 

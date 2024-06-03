@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/12 16:21:52 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/28 18:57:55 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:34:23 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,9 +31,6 @@ Request IrcServ::parseResponse(std::string response) {
     for (std::string arg; iss >> arg;)
         args.push_back(arg);
 
-    // if (args.empty())
-    //     request.status = 1;
-
     request.cmd = cmd;
     request.args = args;
     return request;
@@ -41,10 +38,11 @@ Request IrcServ::parseResponse(std::string response) {
 
 std::string IrcServ::parseRequest(Request request, int fd) {
     std::string response;
+    //! DON'T FORGET TO REMOVE THIS LINE
     std::cout << "CMD: " << request.cmd << std::endl;
 
     if (request.status == 1)
-        response = "Parssing Error\r\n";
+        return "";
     else if (request.cmd == "CAP")
         response = serverCap(request, fd);
     else if (request.cmd == "PASS")

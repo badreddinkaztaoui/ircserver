@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 04:07:05 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/21 10:02:17 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 15:02:00 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,7 +56,7 @@ public:
     void                        setTopic(std::string topic);
     void                        setOperator(int fd);
     void                        setPassword(std::string password);
-    void                        setConeectedClients();
+    void                        setConnectedClients();
     void                        setLimit(int limit);
 
     // Methods

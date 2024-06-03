@@ -6,13 +6,13 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/21 04:16:19 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/05/28 19:20:54 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 14:20:29 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/Utils.hpp"
 
-void    welcomeMessage(int fd) {
+void    connectedMsg(int fd) {
 
     std::string msg = "";
     msg += "";
@@ -33,6 +33,15 @@ void    welcomeMessage(int fd) {
     msg += "\t\x03" "03\x02/NICK\x03 <nickname>)\n";
     msg += "\t\x03" "15 STEP 3: Set your username 📝\x03\n";
     msg += "\t\x03" "03\x02/USER\x03 <username> <hostname> <servername> :<realname>\n\n";
+
+    send(fd, msg.c_str(), msg.length(), 0);
+}
+
+void    registredMsg(int fd) {
+    std::string msg = "";
+    msg += "\t\x03" "08┓ ┏  ┓                                  \x03\n";
+    msg += "\t\x03" "08┃┃┃┏┓┃┏┏┓┏┳┓┏┓  ╋┏┓  ┏┓┓┏┏┓  ┏┏┓┏┓┓┏┏┓┏┓\x03\n";
+    msg += "\t\x03" "08┗┻┛┗ ┗┗┗┛┛┗┗┗   ┗┗┛  ┗┛┗┻┛   ┛┗ ┛ ┗┛┗ ┛ \x03\n";
 
     send(fd, msg.c_str(), msg.length(), 0);
 }
