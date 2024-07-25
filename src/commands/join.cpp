@@ -6,7 +6,7 @@
 /*   By: bkaztaou <bkaztaou@student.1337.ma>        +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/05/20 16:24:59 by bkaztaou          #+#    #+#             */
-/*   Updated: 2024/06/03 15:02:00 by bkaztaou         ###   ########.fr       */
+/*   Updated: 2024/06/03 16:09:27 by bkaztaou         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,12 +20,11 @@ void    IrcServ::broadcast(std::string channel, int fd) {
     time_t date = this->channels[channel]->getCreationTime();
     std::string message = "";
 
-    message += this->clientList[fd]->getNickName() + " has joined " + channel + "\r\n";
-    message += "Welcome to the channel " + channel + " " + clientList[fd]->getNickName() + "\r\n";
-    message += "Topic: " + this->channels[channel]->getTopic() + "\r\n";
-    message += "Channel created at: " + std::string(ctime(&date)) + "\r\n";
-    message += "Channel creator: " + this->channels[channel]->getOwner()->getNickName() + "\r\n";
-    message += "Channel has : " + toStr(this->channels[channel]->getConnectedClients()) + " members\r\n";
+    message += this->clientList[fd]->getNickName() + " has joined " + channel + "\n";
+    message += "Welcome to the channel " + channel + " " + clientList[fd]->getNickName() + "\n";
+    message += "Topic: " + this->channels[channel]->getTopic() + "\n";
+    message += "Channel created at: " + std::string(ctime(&date)) + "\n";
+    message += "Channel creator: " + this->channels[channel]->getOwner()->getNickName() + "\n";
     this->channels[channel]->sendToAll(message);
 }
 
@@ -50,12 +49,16 @@ std::string IrcServ::join(Request request, int fd) {
     if (!findChannel(channel, this->channels))
         createChannel(channel, fd);
     else {
-        if (this->channels[channel]->isClosed() == "+i") {
+        if (this->channels[channel]->isClosed() == "+i") { 
             if (!this->channels[channel]->isClient(clientList[fd]))
-                return "You are not invited to this channel\r\n";
-        } else {
-            
+                return "\t\x03" "04You are not invited to this channel\x03\n";
         }
+
+        if (this->channels[channel]->getPassword() != "") {
+            if (this->channels[channel]->getPassword() != key)
+                return "\t\x03" "04Incorrect channel key\x03\n";
+        }
+        
     }    
     return "";
 }
@@ -63,11 +66,11 @@ std::string IrcServ::join(Request request, int fd) {
 /**
  *if ((this->channels[channel]->getConnectedClients() >= this->channels[channel]->getLimit()) 
         & (this->channels[channel]->getLimit() != 0))
-        return "Channel is full\r\n";
+        return "Channel is full\n";
     if (this->channels[channel]->isPrivate() == "+k")
     {
         if (this->channels[channel]->getPassword() != key)
-            return "Invalid password\r\n";
+            return "Invalid password\n";
         if (this->channels[channel]->getPassword() == key)
         {
             clientList[fd]->setChannel(channel);
